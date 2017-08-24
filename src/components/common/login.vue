@@ -93,7 +93,7 @@ export default {
             this.$refs[name].validate((valid) => {
                 if (valid) {
                     this.$Message.success('提交成功!');
-                    this.$router.push('/index');
+                    this.$router.push('/home');
                 } else {
                     this.$Message.error('表单验证失败!');
                 }

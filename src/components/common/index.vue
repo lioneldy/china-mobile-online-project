@@ -6,12 +6,11 @@
         border-radius: 4px;
         overflow: hidden;
     }
-    .layout-breadcrumb{
-        padding: 10px 15px 0;
+    .layout-tab{
+        padding: 10px 45px 0;
     }
     .layout-content{
         min-height: 600px;
-        margin: 15px;
         overflow: hidden;
         background: #fff;
         border-radius: 4px;
@@ -53,46 +52,100 @@
     .ivu-col{
         transition: width .2s ease-in-out;
     }
+    .demo-affix {
+        display: inline-block;
+        color: #fff;
+        padding: 10px 30px;
+        text-align: center;
+        background: rgba(0, 153, 229, .9);
+    }
+    .btn-item {
+        width: 36px;
+        height: 36px;
+        margin-top: 10px;
+        margin-right: 20px; 
+        text-align: center;
+    }
 </style>
 <template>
-    <div class="layout" :class="{'layout-hide-text': spanLeft < 5}">
+    <div class="layout" :class="{'layout-hide-text': spanLeft < 4}">
         <Row type="flex">
             <i-col :span="spanLeft" class="layout-menu-left">
-                <Menu active-name="1" theme="dark" width="auto">
+                <Menu :active-name="'' + setActive" theme="dark" width="auto" @on-select="routeTo">
                     <div class="layout-logo-left">
                         <Icon type="ios-navigate" :size="iconSize"></Icon>
                         <span class="layout-text">中移云联</span>
                     </div>
-                    <Menu-item name="1">
-                        <Icon type="ios-navigate" :size="iconSize"></Icon>
-                        <span class="layout-text">选项 1</span>
-                    </Menu-item>
-                    <Menu-item name="2">
-                        <Icon type="ios-keypad" :size="iconSize"></Icon>
-                        <span class="layout-text">选项 2</span>
-                    </Menu-item>
-                    <Menu-item name="3">
-                        <Icon type="ios-analytics" :size="iconSize"></Icon>
-                        <span class="layout-text">选项 3</span>
-                    </Menu-item>
+                    <Menu-group>
+                        <Menu-item name="0">
+                            <Icon type="ios-navigate" :size="iconSize"></Icon>
+                            <span class="layout-text">首页</span>
+                        </Menu-item>
+                        <Menu-item name="1">
+                            <Icon type="ios-keypad" :size="iconSize"></Icon>
+                            <span class="layout-text">基础功能</span>
+                        </Menu-item>
+                        <Menu-item name="2">
+                            <Icon type="ios-analytics" :size="iconSize"></Icon>
+                            <span class="layout-text">基础信息管理</span>
+                        </Menu-item>
+                    </Menu-group>
+                    <Menu-group>
+                        <Menu-item name="3">
+                            <Icon type="ios-navigate" :size="iconSize"></Icon>
+                            <span class="layout-text">工单</span>
+                        </Menu-item>
+                        <Menu-item name="4">
+                            <Icon type="ios-keypad" :size="iconSize"></Icon>
+                            <span class="layout-text">知识库</span>
+                        </Menu-item>
+                        <Menu-item name="5">
+                            <Icon type="ios-analytics" :size="iconSize"></Icon>
+                            <span class="layout-text">客户管理</span>
+                        </Menu-item>
+                        <Menu-item name="6">
+                            <Icon type="ios-navigate" :size="iconSize"></Icon>
+                            <span class="layout-text">监控报表</span>
+                        </Menu-item>
+                    </Menu-group>
+                    <Menu-group>
+                        <Menu-item name="7">
+                            <Icon type="ios-keypad" :size="iconSize"></Icon>
+                            <span class="layout-text">设置</span>
+                        </Menu-item>
+                        <Menu-item name="8">
+                            <Icon type="ios-analytics" :size="iconSize"></Icon>
+                            <span class="layout-text">帮助中心</span>
+                        </Menu-item>
+                    </Menu-group>
                 </Menu>
             </i-col>
             <i-col :span="spanRight">
                 <div class="layout-header">
                     <i-button type="text" @click="toggleClick">
-                        <Icon v-if="spanLeft === 2" type="chevron-right" size="28"></Icon>
+                        <Icon v-if="spanLeft === 1" type="chevron-right" size="28"></Icon>
                         <Icon v-else type="chevron-left" size="28"></Icon>
                     </i-button>
+                    <button type="primary" class="btn-item">签出</button>
+                    <button type="primary" class="btn-item">签入</button>
+                    <button type="primary" class="btn-item">小休</button>
+                    <button type="primary" class="btn-item">IM</button>
+                    <button type="primary" class="btn-item">保持</button>
+                    <button type="primary" class="btn-item">呼转</button>
+                    <button type="primary" class="btn-item">呼出</button>
+                    <button type="primary" class="btn-item">应答</button>
                 </div>
-                <div class="layout-breadcrumb">
-                    <Breadcrumb>
-                        <Breadcrumb-item>首页</Breadcrumb-item>
-                        <Breadcrumb-item>应用中心</Breadcrumb-item>
-                        <Breadcrumb-item>某应用</Breadcrumb-item>
-                    </Breadcrumb>
-                </div>
-                <div class="layout-content">
-                    <div class="layout-content-main">内容区域</div>
+                <div class="layout-tab">
+                    <Tabs v-model="tabActive" closable :animated="false" type="card" @on-tab-remove="handleTabRemove" @on-click="tabClick">
+                        <Tab-pane v-for="tab in tabs" :name="tab.id" :label="tab.name" v-if="tab.show">
+                            <div class="layout-content">
+                                <div class="layout-content-main">
+                                    <router-view></router-view>
+                                </div>
+                            </div>
+                        </Tab-pane>
+                        
+                    </Tabs>
                 </div>
                 <div class="layout-copy">
                     2011-2016 &copy; TalkingData
@@ -102,27 +155,110 @@
     </div>
 </template>
 <script>
+import Home from "../page/home.vue"
+import Function from "../page/function.vue"
+import Information from "../page/information-management.vue"
+import Order from "../page/order.vue"
+import Repository from "../page/repository.vue"
+import Customer from "../page/customer-management.vue"
+import Monitor from "../page/monitor-report.vue"
+import Settings from "../page/settings.vue"
+import Help from "../page/help.vue"
+
     export default {
         data () {
             return {
-                spanLeft: 5,
-                spanRight: 19
+                spanLeft: 4,
+                spanRight: 20,
+                setActive: '0',
+                tabActive: '0',
+                tabs: [{
+                    id: '0',
+                    name: '首页',
+                    url: '/home',
+                    show: true
+                },{
+                    id: '1',
+                    name: '基础功能',
+                    url: '/function',
+                    show: false
+                },{
+                    id: '2',
+                    name: '基础信息管理',
+                    url: '/information-management',
+                    show: false
+                },{
+                    id: '3',
+                    name: '工单',
+                    url: '/order',
+                    show: false
+                },{
+                    id: '4',
+                    name: '知识库',
+                    url: '/repository',
+                    show: false
+                },{
+                    id: '5',
+                    name: '客户管理',
+                    url: '/customer-management',
+                    show: false
+                },{
+                    id: '6',
+                    name: '监控报表',
+                    url: '/monitor-report',
+                    show: false
+                },{
+                    id: '7',
+                    name: '设置',
+                    url: '/settings',
+                    show: false
+                },{
+                    id: '8',
+                    name: '帮助中心',
+                    url: '/help',
+                    show: false
+                }]
             }
+        },
+        components: {
+            Home,
+            Function,
+            Information,
+            Order,
+            Repository,
+            Customer,
+            Monitor,
+            Settings,
+            Help
         },
         computed: {
             iconSize () {
-                return this.spanLeft === 5 ? 14 : 24;
+                return this.spanLeft === 4 ? 14 : 24;
             }
         },
         methods: {
             toggleClick () {
-                if (this.spanLeft === 5) {
-                    this.spanLeft = 2;
-                    this.spanRight = 22;
+                if (this.spanLeft === 4) {
+                    this.spanLeft = 1;
+                    this.spanRight = 23;
                 } else {
-                    this.spanLeft = 5;
-                    this.spanRight = 19;
+                    this.spanLeft = 4;
+                    this.spanRight = 20;
                 }
+            },
+            handleTabRemove (name) {
+                this.tabs[name].show = false;
+            },
+            tabClick(name) {
+                let url = this.tabs[name].url;
+                this.setActive = '' + name;
+                this.$router.push(url);
+            },
+            routeTo(e) {
+                let url = this.tabs[e].url;
+                this.tabs[e].show = true;
+                this.tabActive = '' + e;
+                this.$router.push(url);
             }
         }
     }
