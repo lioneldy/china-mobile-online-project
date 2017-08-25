@@ -68,13 +68,11 @@
     }
     .layout-right-content {
         position: absolute;
-        width: 300px;
+        width: 390px;
         height: 100%;
-        top: 50px;
+        top: 60px;
         right: 0;
         border: 1px;
-    }
-    .layout-hide-right{
         overflow: hidden;
     }
 </style>
@@ -145,10 +143,20 @@
                     <button type="primary" class="btn-item">呼转</button>
                     <button type="primary" class="btn-item">呼出</button>
                     <button type="primary" class="btn-item">应答</button>
+                    <label style="margin-left:60px">{{user.name}}&nbsp;&nbsp;&nbsp;&nbsp;{{user.id}}&nbsp;&nbsp;&nbsp;&nbsp;当前权限：</label>
+                    <label style="font-weight:bold">{{user.auth}}</label>
+                    <button type="primary" class="btn-item" style="float:right" @click="logout">退出登录</button>
                 </div>
                 <div class="layout-tab">
-                    <Tabs v-model="tabActive" closable :animated="false" type="card" @on-tab-remove="handleTabRemove" @on-click="tabClick">
-                        <Tab-pane v-for="tab in tabs" :key="tab.id" :name="tab.id" :label="tab.name" v-if="tab.show">
+                    <Tabs v-model="tabActive" :animated="false" type="card" @on-tab-remove="handleTabRemove" @on-click="tabClick">
+                        <Tab-pane name="0" label="首页">
+                            <div class="layout-content">
+                                <div class="layout-content-main">
+                                    <router-view></router-view>
+                                </div>
+                            </div>
+                        </Tab-pane>
+                        <Tab-pane v-for="tab in tabs" closable :key="tab.id" :name="tab.id" :label="tab.name" v-if="tab.show">
                             <div class="layout-content">
                                 <div class="layout-content-main">
                                     <router-view></router-view>
@@ -165,10 +173,8 @@
                                 </i-button>
                             </i-col>
                             <i-col :span="span2">
-                                <div class="layout-hide-right">
-                                    <Card>
-                                        <p slot="title">来电客户基本信息</p>
-                                    </Card>
+                                <div v-show="!showRight">
+                                    <RightInfo></RightInfo>
                                 </div>
                             </i-col>
                         </Row>
@@ -182,6 +188,7 @@
     </div>
 </template>
 <script>
+import RightInfo from "../page/right-hide-info.vue"
     export default {
         data () {
             return {
@@ -192,56 +199,71 @@
                 showRight: true,
                 setActive: '0',
                 tabActive: '0',
-                tabs: [{
-                    id: '0',
-                    name: '首页',
-                    url: '/home',
-                    show: true
-                },{
-                    id: '1',
-                    name: '基础功能',
-                    url: '/function',
-                    show: false
-                },{
-                    id: '2',
-                    name: '基础信息管理',
-                    url: '/information-management',
-                    show: false
-                },{
-                    id: '3',
-                    name: '工单',
-                    url: '/order',
-                    show: false
-                },{
-                    id: '4',
-                    name: '知识库',
-                    url: '/repository',
-                    show: false
-                },{
-                    id: '5',
-                    name: '客户管理',
-                    url: '/customer-management',
-                    show: false
-                },{
-                    id: '6',
-                    name: '监控报表',
-                    url: '/monitor-report',
-                    show: false
-                },{
-                    id: '7',
-                    name: '设置',
-                    url: '/settings',
-                    show: false
-                },{
-                    id: '8',
-                    name: '帮助中心',
-                    url: '/help',
-                    show: false
-                }]
+                user: {
+                    id: '9527',
+                    name: '杨小贝',
+                    auth: '座席'
+                },
+                tabs: [
+                    {
+                        id: '0',
+                        name: '首页',
+                        url: '/home',
+                        show: false
+                    },
+                    {
+                        id: '1',
+                        name: '基础功能',
+                        url: '/function',
+                        show: false
+                    },
+                    {
+                        id: '2',
+                        name: '基础信息管理',
+                        url: '/information-management',
+                        show: false
+                    },
+                    {
+                        id: '3',
+                        name: '工单',
+                        url: '/order',
+                        show: false
+                    },
+                    {
+                        id: '4',
+                        name: '知识库',
+                        url: '/repository',
+                        show: false
+                    },
+                    {
+                        id: '5',
+                        name: '客户管理',
+                        url: '/customer-management',
+                        show: false
+                    },
+                    {
+                        id: '6',
+                        name: '监控报表',
+                        url: '/monitor-report',
+                        show: false
+                    },
+                    {
+                        id: '7',
+                        name: '设置',
+                        url: '/settings',
+                        show: false
+                    },
+                    {
+                        id: '8',
+                        name: '帮助中心',
+                        url: '/help',
+                        show: false
+                    }
+                ]
             }
         },
         components: {
-            
+            RightInfo
         },
         computed: {
             iconSize () {
@@ -271,6 +293,7 @@
             handleTabRemove (name) {
                 this.tabs[name].show = false;
                 let url = this.tabs[this.tabActive].url;
+                this.setActive = this.tabActive;
                 this.$router.push(url);
             },
             tabClick (name) {
@@ -280,9 +303,14 @@
             },
             routeTo (e) {
                 let url = this.tabs[e].url;
-                this.tabs[e].show = true;
+                if (e != '0') {
+                    this.tabs[e].show = true;
+                }
                 this.tabActive = '' + e;
                 this.$router.push(url);
+            },
+            logout () {
+                this.$router.push('/login');
             }
         }
     }

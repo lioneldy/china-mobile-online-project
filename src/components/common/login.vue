@@ -5,29 +5,24 @@
     height: 100%;
     background-color: #bebebe;
 }
+.layout-row {
+    margin-top: 100px;
+}
 .layout .picture {
-    width: 608px;
-    height: 410px;
-    position: absolute;
+    width: 100%;
+    height: 380px;
     background-color: #eee;
-    left: 58px;
-    top: 90px;
 }
-.layout .login-content {
-    width: 500px;
-    height: 405px;
-    position: absolute;
+.layout .login {
+    width: 100%;
+    height: 100%;
     background-color: #eee;
-    left: 710px;
-    top: 95px;
 }
-.layout .login-content .login {
-    width: 360px;
+.login {
+    width: 400px auto;
     margin: 0 auto;
     margin-bottom: 0px;
-    padding: 20px;
-    padding-top: 80px;
-    padding-bottom: 15px;
+    padding: 50px;
     -webkit-border-radius: 7px;
     -moz-border-radius: 7px;
     -ms-border-radius: 7px;
@@ -38,25 +33,32 @@
 
 <template>
     <div class="layout">
-        <div class="picture">picture</div>
-        <div class="login-content">
-            <div class="login">
-                <Form ref="formInline" :model="formInline" :rules="ruleInline" label-position="left" :label-width="80">
-                    <Form-item label="用户名" prop="user">
-                        <Input type="text" v-model="formInline.user" placeholder="请输入用户名称"></Input>
-                    </Form-item>
-                    <Form-item label="密码" prop="password">
-                        <Input type="password" v-model="formInline.password" placeholder="请输入密码"></Input>
-                    </Form-item>
-                    <Form-item label="电话号码" prop="tel">
-                        <Input type="text" v-model="formInline.tel" placeholder="请输入电话号码"></Input>
-                    </Form-item>
-                    <Form-item>
-                        <Button type="primary" long @click="handleSubmit('formInline')">登录</Button>
-                    </Form-item>
-                </Form>
-            </div>
-        </div>
+        <Row class="layout-row" type="flex" align="bottom">
+            <Col span="10" offset="2">
+                <div class="picture">picture</div>
+            </Col>
+            <Col span="9" offset="1">
+                <div>
+                    <h1>登录</h1>
+                </div>
+                <div class="login">
+                    <Form ref="formInline" :model="formInline" :rules="ruleInline" label-position="left" :label-width="80">
+                        <Form-item label="用户名" prop="user">
+                            <Input type="text" v-model="formInline.user" placeholder="请输入用户名称"></Input>
+                        </Form-item>
+                        <Form-item label="密码" prop="password">
+                            <Input type="password" v-model="formInline.password" placeholder="请输入密码"></Input>
+                        </Form-item>
+                        <Form-item label="电话号码" prop="tel">
+                            <Input type="text" v-model="formInline.tel" placeholder="请输入电话号码"></Input>
+                        </Form-item>
+                        <Form-item>
+                            <Button type="primary" long @click="handleSubmit('formInline')">登录</Button>
+                        </Form-item>
+                    </Form>
+                </div>
+            </Col>
+        </Row>
     </div>
 </template>
 
