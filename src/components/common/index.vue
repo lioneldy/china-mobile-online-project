@@ -27,7 +27,6 @@
         background: #464c5b;
     }
     .layout-header{
-        height: 50px;
         background: #fff;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
     }
@@ -64,7 +63,19 @@
         height: 36px;
         margin-top: 10px;
         margin-right: 20px; 
+        margin-bottom: 10px; 
         text-align: center;
+    }
+    .layout-right-content {
+        position: absolute;
+        width: 300px;
+        height: 100%;
+        top: 50px;
+        right: 0;
+        border: 1px;
+    }
+    .layout-hide-right{
+        overflow: hidden;
     }
 </style>
 <template>
@@ -137,15 +148,31 @@
                 </div>
                 <div class="layout-tab">
                     <Tabs v-model="tabActive" closable :animated="false" type="card" @on-tab-remove="handleTabRemove" @on-click="tabClick">
-                        <Tab-pane v-for="tab in tabs" :name="tab.id" :label="tab.name" v-if="tab.show">
+                        <Tab-pane v-for="tab in tabs" :key="tab.id" :name="tab.id" :label="tab.name" v-if="tab.show">
                             <div class="layout-content">
                                 <div class="layout-content-main">
                                     <router-view></router-view>
                                 </div>
                             </div>
                         </Tab-pane>
-                        
                     </Tabs>
+                    <div class="layout-right-content">
+                        <Row>
+                            <i-col :span="span1">
+                                <i-button type="text" @click="toggleClick2" style="float: right;">
+                                    <Icon v-if="showRight" type="chevron-left" size="28"></Icon>
+                                    <Icon v-else type="chevron-right" size="28"></Icon>
+                                </i-button>
+                            </i-col>
+                            <i-col :span="span2">
+                                <div class="layout-hide-right">
+                                    <Card>
+                                        <p slot="title">来电客户基本信息</p>
+                                    </Card>
+                                </div>
+                            </i-col>
+                        </Row>
+                    </div>
                 </div>
                 <div class="layout-copy">
                     2011-2016 &copy; TalkingData
@@ -155,21 +182,14 @@
     </div>
 </template>
 <script>
-import Home from "../page/home.vue"
-import Function from "../page/function.vue"
-import Information from "../page/information-management.vue"
-import Order from "../page/order.vue"
-import Repository from "../page/repository.vue"
-import Customer from "../page/customer-management.vue"
-import Monitor from "../page/monitor-report.vue"
-import Settings from "../page/settings.vue"
-import Help from "../page/help.vue"
-
     export default {
         data () {
             return {
                 spanLeft: 4,
                 spanRight: 20,
+                span1: 23,
+                span2: 1,
+                showRight: true,
                 setActive: '0',
                 tabActive: '0',
                 tabs: [{
@@ -221,15 +241,7 @@ import Help from "../page/help.vue"
             }
         },
         components: {
-            Home,
-            Function,
-            Information,
-            Order,
-            Repository,
-            Customer,
-            Monitor,
-            Settings,
-            Help
+            
         },
         computed: {
             iconSize () {
@@ -246,15 +258,27 @@ import Help from "../page/help.vue"
                     this.spanRight = 20;
                 }
             },
+            toggleClick2 () {
+                this.showRight = !this.showRight;
+                if (this.span1 === 6) {
+                    this.span1 = 23;
+                    this.span2 = 1;
+                } else {
+                    this.span1 = 6;
+                    this.span2 = 18;
+                }
+            },
             handleTabRemove (name) {
                 this.tabs[name].show = false;
+                let url = this.tabs[this.tabActive].url;
+                this.$router.push(url);
             },
-            tabClick(name) {
+            tabClick (name) {
                 let url = this.tabs[name].url;
                 this.setActive = '' + name;
                 this.$router.push(url);
             },
-            routeTo(e) {
+            routeTo (e) {
                 let url = this.tabs[e].url;
                 this.tabs[e].show = true;
                 this.tabActive = '' + e;
