@@ -10,7 +10,7 @@
 }
 .layout .picture {
     width: 100%;
-    height: 380px;
+    height: 360px;
     background-color: #eee;
 }
 .layout .login {
